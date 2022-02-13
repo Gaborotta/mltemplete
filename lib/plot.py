@@ -1,10 +1,8 @@
 # %%
-from matplotlib import markers
 import pandas as pd
 import plotly.graph_objects as go
 from plotly.colors import qualitative
 import plotly.express as px
-import numpy as np
 from typing import List
 # %%
 pdf = px.data.iris()
@@ -37,7 +35,7 @@ def plot_scatter_select_axis(pdf: pd.DataFrame, cols: List[str], color_col: str 
     Returns:
         go.Figure: plotlyのfigureオブジェクト
 
-    example:
+    Example:
         fig = plot_scatter_select_axis(
             pdf=pdf, cols=cols,
             color_col=color_col, text_col=text_col, isShow=True
@@ -110,10 +108,10 @@ def plot_scatter_matrix(pdf: pd.DataFrame, cols: List[str] = None, color_col: st
         isShow (bool, optional): 呼び出し時にshowするかどうか。 Defaults to True.
 
     Returns:
-        go.Figure: [description]
+        go.Figure: plotlyのfigureオブジェクト
 
-    examples:
-        plot_scatter_matrix(pdf, color_col="species")
+    Examples:
+        fig = plot_scatter_matrix(pdf, cols=cols, color_col="species")
     """
     cols = cols if cols is not None else pdf.columns
     fig = px.scatter_matrix(
@@ -126,3 +124,68 @@ def plot_scatter_matrix(pdf: pd.DataFrame, cols: List[str] = None, color_col: st
     if isShow:
         fig.show()
     return fig
+
+# %%
+
+
+def plot_line(pdf: pd.DataFrame, x: str, y: str, color_col: str = None, isShow: bool = True) -> go.Figure:
+    """折れ線図
+
+    Args:
+        pdf (pd.DataFrame): データセット
+        x (str): X軸のカラム名
+        y (str): Y軸のカラム名
+        color_col (str, optional): マーカーの色分けに使用するカラム名.Noneは色分けしない Defaults to None.
+        isShow (bool, optional): 呼び出し時にshowするかどうか。 Defaults to True.
+
+    Returns:
+        go.Figure: plotlyのfigureオブジェクト
+
+    Examples:
+        fig = plot_line(pdf=pdf, x=default_x, y=default_y,color_col=color_col, isShow=True)
+
+    """
+
+    fig = px.line(pdf, x=x, y=y, color=color_col, markers=True)
+
+    if isShow:
+        fig.show()
+    return fig
+
+# %%
+
+
+def plot_muluti_violins(pdf: pd.DataFrame, cols: List[str], plot_all_points: bool = True, color_col: str = None, isShow: bool = True) -> List[go.Figure]:
+    """指定した軸のバイオリンプロット
+
+    Args:
+        pdf (pd.DataFrame): データセット
+        cols (List[str]): 表示する軸のカラム名のリスト
+        plot_all_points (bool, optional): 点を全てプロットするかどうか. Defaults to True.
+        color_col (str, optional): マーカーの色分けに使用するカラム名.Noneは色分けしない Defaults to None.
+        isShow (bool, optional): 呼び出し時にshowするかどうか。 Defaults to True.
+
+    Returns:
+        List[go.Figure]: plotlyのfigureオブジェクト
+    Examples:
+        fig_list = plot_muluti_violins(pdf=pdf, cols=cols, plot_all_points=True,color_col=color_col, isShow=True)
+    """
+
+    points = "all" if plot_all_points else "outliers"
+
+    fig_list = []
+    for c in cols:
+        fig = px.violin(
+            pdf, y=c,
+            # x=color_col,
+            color=color_col,
+            box=True,
+            points=points,
+            hover_name="species",
+            # violinmode="overlay"
+        )
+        fig_list.append(fig)
+        if isShow:
+            fig.show()
+
+    return fig_list
