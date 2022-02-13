@@ -1,3 +1,6 @@
+#########################################
+# よく使う作図関数
+#########################################
 # %%
 import pandas as pd
 import plotly.graph_objects as go
@@ -5,21 +8,27 @@ from plotly.colors import qualitative
 import plotly.express as px
 from typing import List
 # %%
-pdf = px.data.iris()
-pdf.head(1)
-pdf.columns
-# %%
-cols = [
-    'sepal_length', 'sepal_width',
-    'petal_length', 'petal_width',
-    # 'species', 'species_id'
-]
-default_x = "sepal_length"
-default_y = "sepal_width"
-color_col = "species_id"
-text_col = "species"
+#########################################
+# サンプル用の設定
+#########################################
+# pdf = px.data.iris()
+# pdf.head(1)
+
+# cols = [
+#     'sepal_length', 'sepal_width',
+#     'petal_length', 'petal_width',
+#     # 'species', 'species_id'
+# ]
+# default_x = "sepal_length"
+# default_y = "sepal_width"
+# color_col = "species_id"
+# text_col = "species"
 
 # %%
+
+#########################################
+# 関数定義
+#########################################
 
 
 def plot_scatter_select_axis(pdf: pd.DataFrame, cols: List[str], color_col: str = None, text_col: str = None, isShow: bool = True) -> go.Figure:
