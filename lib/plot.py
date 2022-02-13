@@ -189,3 +189,56 @@ def plot_muluti_violins(pdf: pd.DataFrame, cols: List[str], plot_all_points: boo
             fig.show()
 
     return fig_list
+
+
+# %%
+def plot_redar_chart(pdf: pd.DataFrame, cols: List[str], color_col: str, text_col: str,  isShow: bool = True) -> go.Figure:
+    """color_col、text_colごとに指定した軸でレーダーチャートを作成。
+       color_col、text_colが必須なので注意。
+
+    Args:
+        pdf (pd.DataFrame): データセット
+        cols (List[str]): 表示する軸のカラム名のリスト
+        color_col (str): マーカーの色分けに使用するカラム名
+        text_col (str): ラベルに使用するカラム名
+        isShow (bool, optional): 呼び出し時にshowするかどうか。 Defaults to True.
+
+    Returns:
+        go.Figure: plotlyのfigureオブジェクト
+    Examples:
+        fig = plot_redar_chart(pdf=pdf, cols=cols, color_col=color_col, text_col=text_col)
+    """
+
+    mean_pdf = (
+        pdf.loc[:, cols + [color_col, text_col]]
+        .groupby([color_col, text_col])
+        .mean()
+        .reset_index()
+    )
+    mean_pdf
+
+    for tc in cols:
+
+        tc_mean = mean_pdf[tc].mean()
+        tc_std = mean_pdf[tc].std()
+
+        mean_pdf[tc] = ((mean_pdf[tc] - tc_mean) / (tc_std)) * 5 + 1
+
+    fig = go.Figure()
+    for row in mean_pdf.to_numpy().tolist():
+        row[0]
+        fig.add_trace(go.Scatterpolar(
+            r=row[2:],
+            theta=cols,
+            fill='toself',
+            name=f'{row[0]}-{row[1]}'
+        ))
+
+    fig.update_layout(
+        polar=dict(radialaxis=dict(visible=True, range=[-6.5, 6.5])),
+        showlegend=True
+    )
+
+    if isShow:
+        fig.show()
+    return fig
